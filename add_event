@@ -434,8 +434,8 @@ def create_calendar_event(title, start, end, is_all_day=False, reminder_minutes=
     reminder_debug = f" with reminder at {reminder_minutes} minutes before" if reminder_minutes else ""
     debug_print(f"DEBUG: Creating event '{title}' from {start_str} to {end_str} (All day: {is_all_day}){reminder_debug}")
     
-    # Escape title for AppleScript
-    title_escaped = title.replace('"', '\\"')
+    # Escape title for AppleScript - escape quotes and backslashes
+    title_escaped = title.replace('\\', '\\\\').replace('"', '\\"')
     
     # Build AppleScript
     if is_all_day:
