@@ -48,11 +48,11 @@ def parse_event(text, debug_print=lambda *args, **kwargs: None):
     tomorrow_time_match = re.search(tomorrow_time_pattern, text, re.IGNORECASE)
     
     # Handle "next tuesday", "next wednesday", etc.
-    next_day_pattern = r'next\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday)(?:\s+at\s+(\d{1,2})(?::\d{2})?\s*(am|pm))?'
+    next_day_pattern = r'next\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday)(?:\s+at\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm))?'
     next_day_match = re.search(next_day_pattern, text, re.IGNORECASE)
     
     # Handle just "tuesday", "wednesday", etc.
-    day_pattern = r'\b(monday|tuesday|wednesday|thursday|friday|saturday|sunday)(?:\s+at\s+(\d{1,2})(?::\d{2})?\s*(am|pm))?\b'
+    day_pattern = r'\b(monday|tuesday|wednesday|thursday|friday|saturday|sunday)(?:\s+at\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm))?\b'
     day_match = re.search(day_pattern, text, re.IGNORECASE)
     
     # Handle "on may 15th at 10am"
@@ -163,9 +163,10 @@ def parse_event(text, debug_print=lambda *args, **kwargs: None):
         # Set time if provided
         if match_to_use.group(2):  # Time was specified (e.g., "tuesday at 8am")
             hour = int(match_to_use.group(2))
-            if match_to_use.group(3) and match_to_use.group(3).lower() == 'pm' and hour < 12:
+            minute = int(match_to_use.group(3)) if match_to_use.group(3) else 0
+            if match_to_use.group(4) and match_to_use.group(4).lower() == 'pm' and hour < 12:
                 hour += 12
-            target_date = target_date.replace(hour=hour, minute=0, second=0, microsecond=0)
+            target_date = target_date.replace(hour=hour, minute=minute, second=0, microsecond=0)
         else:
             # Default to 9am if no time specified
             target_date = target_date.replace(hour=9, minute=0, second=0, microsecond=0)
